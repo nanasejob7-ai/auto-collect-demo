@@ -1,9 +1,22 @@
 # 定期取得デモ
 
+[![定期取得](https://github.com/nanasejob7-ai/auto-collect-demo/actions/workflows/collect.yml/badge.svg)](https://github.com/nanasejob7-ai/auto-collect-demo/actions/workflows/collect.yml)
+[![公開ページ](https://img.shields.io/badge/公開ページ-稼働中-2dd4bf)](https://nanasejob7-ai.github.io/auto-collect-demo/)
+
 公開データを毎日決まった時刻に取得し、蓄積して表示するサンプルです。
 業務自動化の受注時にお渡しする構成を、そのまま公開できる題材で組んだものです。
 
-**表示ページ:** `docs/index.html`（GitHub Pages）
+### 📡 実際に動いているところを見る
+
+| | |
+|---|---|
+| **表示ページ（自動更新）** | https://nanasejob7-ai.github.io/auto-collect-demo/ |
+| **実行履歴（毎朝の記録）** | [Actions タブ](https://github.com/nanasejob7-ai/auto-collect-demo/actions/workflows/collect.yml) |
+| **蓄積データ（生JSON）** | [docs/data.json](docs/data.json) |
+| **品質レポート（自動生成）** | [docs/quality_report.md](docs/quality_report.md) |
+
+上のバッジは**現在の実行状態をリアルタイムで表示**しています。緑なら直近の自動実行が成功しています。
+実行履歴はログまで公開されているので、いつ・何を取得したかを誰でも確認できます。
 
 ---
 
