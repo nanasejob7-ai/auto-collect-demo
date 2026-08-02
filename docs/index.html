@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>定期取得デモ — 自動収集と品質の可視化</title>
+<style>
+  :root{
+    --bg:#0f1720; --panel:#16212c; --line:#243343;
+    --text:#e6edf3; --muted:#93a4b5; --accent:#2dd4bf; --warn:#f5b942;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f8fa; --panel:#fff; --line:#dfe5ec;
+           --text:#1c2530; --muted:#5b6b7c; }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;
+    line-height:1.7; padding:32px 20px 64px;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+  header{border-bottom:2px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  .eyebrow{color:var(--accent);font-size:13px;font-weight:700;letter-spacing:.08em}
+  h1{font-size:26px;margin:6px 0 10px;letter-spacing:-.01em}
+  .lead{color:var(--muted);font-size:15px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:24px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card .k{color:var(--muted);font-size:12px;font-weight:700}
+  .card .v{font-size:26px;font-weight:800;margin-top:4px}
+  .card .v.warn{color:var(--warn)}
+  h2{font-size:17px;margin:32px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel);min-width:520px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--muted);font-size:12px;font-weight:700}
+  tr:last-child td{border-bottom:none}
+  td.null{color:var(--warn);font-style:italic}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);
+        border-radius:8px;padding:14px 16px;font-size:14px;color:var(--muted);margin-top:14px}
+  .note b{color:var(--text)}
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:13px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">PORTFOLIO / 定期実行の自動化</div>
+    <h1>公開データを毎日取得して蓄積するデモ</h1>
+    <p class="lead">
+      GitHub Actions で毎朝 06:10 JST に無人実行し、取得結果と品質を記録しています。
+      このページも自動更新されます。
+    </p>
+  </header>
+
+  <div class="cards" id="cards"></div>
+
+  <h2>蓄積データ</h2>
+  <div class="scroll"><table id="table">
+    <thead><tr><th>日付</th><th>天気</th><th>最高</th><th>最低</th><th>取得時刻</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+
+  <div class="note">
+    <b>欠損を隠していません。</b>
+    最低気温は予報に含まれない日があり、その場合は空欄のままにしています。
+    見た目を整えるために 0 や前日値で埋めると、
+    「エラーは出ていないのに数字が合わない」という最も気づきにくい不具合になります。
+  </div>
+
+  <h2>この仕組みが備えていること</h2>
+  <div class="scroll"><table>
+    <tbody>
+      <tr><td><b>決まった時刻に無人実行</b></td><td>PCを開いていなくても動きます</td></tr>
+      <tr><td><b>構造の変化を検出したら停止</b></td><td>取得元の仕様が変わったら、続行せず異常終了します</td></tr>
+      <tr><td><b>失敗したらIssueで通知</b></td><td>見に行かないと気づけない状態にしません</td></tr>
+      <tr><td><b>品質を数値で記録</b></td><td>必須項目の充足率を毎回出力します</td></tr>
+      <tr><td><b>取得元と時刻を全件に保持</b></td><td>あとから監査できます</td></tr>
+    </tbody>
+  </table></div>
+
+  <footer>
+    取得元：気象庁の公開データ（認証不要）／
+    <a href="quality_report.md">品質レポート</a>
+  </footer>
+
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+fetch('data.json?' + Date.now())
+  .then(r => r.json())
+  .then(rows => {
+    const total = rows.length;
+    const filled = f => rows.filter(r => r[f] !== null && r[f] !== '').length;
+    const rate = f => total ? Math.round(filled(f) / total * 100) : 0;
+    const last = rows[rows.length - 1];
+
+    document.getElementById('cards').innerHTML = [
+      ['蓄積件数', total + '件', ''],
+      ['最新の取得', last ? last.date : '—', ''],
+      ['weather 充足率', rate('weather') + '%', ''],
+      ['temp_min 充足率', rate('temp_min') + '%', rate('temp_min') < 100 ? 'warn' : '']
+    ].map(([k, v, cls]) =>
+      `<div class="card"><div class="k">${k}</div><div class="v ${cls}">${esc(v)}</div></div>`
+    ).join('');
+
+    document.querySelector('#table tbody').innerHTML = rows.slice().reverse().map(r => {
+      const cell = v => (v === null || v === '')
+        ? '<td class="null">未取得</td>'
+        : `<td>${esc(v)}</td>`;
+      return `<tr><td>${esc(r.date)}</td><td>${esc(r.weather)}</td>`
+           + cell(r.temp_max) + cell(r.temp_min)
+           + `<td>${esc((r.fetched_at || '').replace('T', ' ').slice(0, 16))}</td></tr>`;
+    }).join('');
+  })
+  .catch(e => {
+    document.getElementById('cards').innerHTML =
+      '<div class="card"><div class="k">読み込み失敗</div><div class="v warn">—</div></div>';
+    console.error(e);
+  });
+</script>
+</body>
+</html>

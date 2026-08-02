@@ -1,0 +1,18 @@
+# 認証情報は絶対に含めない
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+token.json
+
+# OS / エディタ
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
