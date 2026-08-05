@@ -25,5 +25,14 @@
     "source": "気象庁 予報データ",
     "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
     "fetched_at": "2026-08-04T15:17:25+09:00"
+  },
+  {
+    "date": "2026-08-05",
+    "weather": "晴れ　昼過ぎ　から　くもり　所により　夕方　から　雨",
+    "temp_max": "30",
+    "temp_min": null,
+    "source": "気象庁 予報データ",
+    "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
+    "fetched_at": "2026-08-05T15:15:46+09:00"
   }
 ]
