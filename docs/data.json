@@ -52,5 +52,14 @@
     "source": "気象庁 予報データ",
     "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
     "fetched_at": "2026-08-07T13:37:29+09:00"
+  },
+  {
+    "date": "2026-08-08",
+    "weather": "晴れ　時々　くもり",
+    "temp_max": "35",
+    "temp_min": null,
+    "source": "気象庁 予報データ",
+    "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
+    "fetched_at": "2026-08-08T08:07:47+09:00"
   }
 ]
