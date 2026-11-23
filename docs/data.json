@@ -997,5 +997,14 @@
     "source": "気象庁 予報データ",
     "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
     "fetched_at": "2026-11-22T10:09:01+09:00"
+  },
+  {
+    "date": "2026-11-23",
+    "weather": "晴れ",
+    "temp_max": "15",
+    "temp_min": null,
+    "source": "気象庁 予報データ",
+    "source_url": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
+    "fetched_at": "2026-11-23T10:33:48+09:00"
   }
 ]
